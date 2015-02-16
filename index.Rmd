@@ -1,0 +1,81 @@
+---
+title       : Titration-curve simulation for single-site binding systems
+subtitle    : 
+author      : Chao
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Background
+
+In biological studies, it's often to see simple 1:1 binding systems, e.g. binding of a receptor P to a ligand L forming a PL complex as shown below.
+
+<div style='float:left'> <img src=./binding.png> </div>
+
+<div style='font-size:80%'>
+  <br><br>
+  Such a system can be described by the following equations:  
+  $$ L_{total} = L + PL $$
+  $$ P_{total} = P + PL $$
+  $$ Kd = (P*L) / PL $$
+  $$ Bound = PL / P_{total} $$
+  Note: P, L, and PL denote concentrations of the corresponding molecules.
+</div>
+
+---
+
+## Background cont.
+
+It's often that $L_{total}$ ,$P_{total}$ and Bound are known, while Kd is a constant to be determined. To do so:  
+1. Usually a ligand L is gradually added into a protein solution (with a fixed concentration $P_{total}$)  
+2. Bound is measured at different $L_{total}$ concentrations ($L_{total} / P_{total}$ ratio, or L/P ratio is often used instead).  
+3. Data are fitted to the equations to get the constant Kd.
+
+The first step for performing this type of so called "titration" experiments is often to simulate the system of interest with estimated parameters to determined experiment conditions.
+
+Thus I have made this Shiny app to performed this kind of titration curve simulation for 1:1 binding systems. With user-provided parameters ($P_{total}$, final L/P ratio, and estimated Kd), the app can generate simulated titration curves (Bound vs L/P ratio) for two given systems for comparison.
+
+---
+
+## Example input and output
+
+For example, system 1 has a $P_{total}$ of 100 uM and a Kd of 1 uM, while system 2 has a $P_{total}$ of 100 uM and a Kd of 10 uM; if we add ligand L gradually to a final L/P ratio of 2, then the app will generate the following simulated titration curves:
+
+```{r eval=FALSE}
+getdata <- function (pt,kd,lx){
+  lp=seq(0,lx,length.out = 100); lt=lp*pt
+  fr=((kd+pt+lt)-((kd+pt+lt)^2-4*pt*lt)^0.5)/(2*pt)
+  data.frame(lp,fr) }
+
+d1=getdata(100,1,2); d2=getdata(100,10,2)
+da=merge(d1,d2,by='lp'); names(da)=c('L/P Ratio','Bound-1','Bound-2')
+
+library(googleVis)
+pars=list(width=1000,height=500,legend='right', hAxis="{title:'L/P Ratio'}",
+          vAxis="{title:'Fraction Bound'}", colors="['red','blue']" )
+G=gvisLineChart(da,options=pars); print(G,"chart")
+```
+
+---
+
+## Example input and output cont.
+
+```{r echo=FALSE,results="asis"}
+getdata <- function (pt,kd,lx){
+  lp=seq(0,lx,length.out = 100); lt=lp*pt
+  fr=((kd+pt+lt)-((kd+pt+lt)^2-4*pt*lt)^0.5)/(2*pt)
+  data.frame(lp,fr) }
+
+d1=getdata(100,1,2); d2=getdata(100,10,2)
+da=merge(d1,d2,by='lp'); names(da)=c('L/P Ratio','Bound-1','Bound-2')
+
+library(googleVis)
+pars=list(width=1000,height=500,legend='right', hAxis="{title:'L/P Ratio'}",
+          vAxis="{title:'Fraction Bound'}", colors="['red','blue']" )
+G=gvisLineChart(da,options=pars); print(G,"chart")
+```

@@ -1,0 +1,658 @@
+---
+title       : Titration-curve simulation for single-site binding systems
+subtitle    : 
+author      : Chao
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : [mathjax]            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Background
+
+In biological studies, it's often to see simple 1:1 binding systems, e.g. binding of a receptor P to a ligand L forming a PL complex as shown below.
+
+<div style='float:left'> <img src=./binding.png> </div>
+
+<div style='font-size:80%'>
+  <br><br>
+  Such a system can be described by the following equations:  
+  $$ L_{total} = L + PL $$
+  $$ P_{total} = P + PL $$
+  $$ Kd = (P*L) / PL $$
+  $$ Bound = PL / P_{total} $$
+  Note: P, L, and PL denote concentrations of the corresponding molecules.
+</div>
+
+---
+
+## Background cont.
+
+It's often that $L_{total}$ ,$P_{total}$ and Bound are known, while Kd is a constant to be determined. To do so:  
+1. Usually a ligand L is gradually added into a protein solution (with a fixed concentration $P_{total}$)  
+2. Bound is measured at different $L_{total}$ concentrations ($L_{total} / P_{total}$ ratio, or L/P ratio is often used instead).  
+3. Data are fitted to the equations to get the constant Kd.
+
+The first step for performing this type of so called "titration" experiments is often to simulate the system of interest with estimated parameters to determined experiment conditions.
+
+Thus I have made this Shiny app to performed this kind of titration curve simulation for 1:1 binding systems. With user-provided parameters ($P_{total}$, final L/P ratio, and estimated Kd), the app can generate simulated titration curves (Bound vs L/P ratio) for two given systems for comparison.
+
+---
+
+## Example input and output
+
+For example, system 1 has a $P_{total}$ of 100 uM and a Kd of 1 uM, while system 2 has a $P_{total}$ of 100 uM and a Kd of 10 uM; if we add ligand L gradually to a final L/P ratio of 2, then the app will generate the following simulated titration curves:
+
+
+```r
+getdata <- function (pt,kd,lx){
+  lp=seq(0,lx,length.out = 100); lt=lp*pt
+  fr=((kd+pt+lt)-((kd+pt+lt)^2-4*pt*lt)^0.5)/(2*pt)
+  data.frame(lp,fr) }
+
+d1=getdata(100,1,2); d2=getdata(100,10,2)
+da=merge(d1,d2,by='lp'); names(da)=c('L/P Ratio','Bound-1','Bound-2')
+
+library(googleVis)
+pars=list(width=1000,height=500,legend='right', hAxis="{title:'L/P Ratio'}",
+          vAxis="{title:'Fraction Bound'}", colors="['red','blue']" )
+G=gvisLineChart(da,options=pars); print(G,"chart")
+```
+
+---
+
+## Example input and output cont.
+
+<!-- LineChart generated in R 3.1.2 by googleVis 0.5.8 package -->
+<!-- Wed Feb 11 16:33:38 2015 -->
+
+
+<!-- jsHeader -->
+<script type="text/javascript">
+ 
+// jsData 
+function gvisDataLineChartID1bd2222ffe15 () {
+var data = new google.visualization.DataTable();
+var datajson =
+[
+ [
+ 0,
+0,
+0 
+],
+[
+ 0.0202020202,
+0.01999795981,
+0.01833434325 
+],
+[
+ 0.0404040404,
+0.03998750927,
+0.03660450949 
+],
+[
+ 0.06060606061,
+0.05996812348,
+0.0548075057 
+],
+[
+ 0.08080808081,
+0.07993923348,
+0.07294017682 
+],
+[
+ 0.101010101,
+0.09990022159,
+0.09099919708 
+],
+[
+ 0.1212121212,
+0.1198504161,
+0.1089810612 
+],
+[
+ 0.1414141414,
+0.1397890855,
+0.1268820752 
+],
+[
+ 0.1616161616,
+0.1597154313,
+0.1446983471 
+],
+[
+ 0.1818181818,
+0.1796285811,
+0.1624257777 
+],
+[
+ 0.202020202,
+0.1995275792,
+0.180060051 
+],
+[
+ 0.2222222222,
+0.219411377,
+0.1975966248 
+],
+[
+ 0.2424242424,
+0.2392788216,
+0.2150307217 
+],
+[
+ 0.2626262626,
+0.2591286427,
+0.2323573203 
+],
+[
+ 0.2828282828,
+0.2789594375,
+0.2495711465 
+],
+[
+ 0.303030303,
+0.2987696538,
+0.2666666667 
+],
+[
+ 0.3232323232,
+0.3185575693,
+0.2836380801 
+],
+[
+ 0.3434343434,
+0.3383212689,
+0.3004793143 
+],
+[
+ 0.3636363636,
+0.3580586173,
+0.3171840207 
+],
+[
+ 0.3838383838,
+0.3777672278,
+0.3337455726 
+],
+[
+ 0.404040404,
+0.3974444245,
+0.3501570659 
+],
+[
+ 0.4242424242,
+0.4170871997,
+0.3664113213 
+],
+[
+ 0.4444444444,
+0.4366921617,
+0.3825008909 
+],
+[
+ 0.4646464646,
+0.4562554749,
+0.398418068 
+],
+[
+ 0.4848484848,
+0.4757727869,
+0.4141549004 
+],
+[
+ 0.5050505051,
+0.4952391432,
+0.4297032093 
+],
+[
+ 0.5252525253,
+0.5146488845,
+0.4450546132 
+],
+[
+ 0.5454545455,
+0.5339955241,
+0.4602005567 
+],
+[
+ 0.5656565657,
+0.5532715998,
+0.4751323463 
+],
+[
+ 0.5858585859,
+0.5724684967,
+0.489841192 
+],
+[
+ 0.6060606061,
+0.5915762327,
+0.5043182559 
+],
+[
+ 0.6262626263,
+0.6105832,
+0.5185547071 
+],
+[
+ 0.6464646465,
+0.6294758522,
+0.5325417835 
+],
+[
+ 0.6666666667,
+0.6482383278,
+0.5462708597 
+],
+[
+ 0.6868686869,
+0.6668519978,
+0.5597335206 
+],
+[
+ 0.7070707071,
+0.6852949247,
+0.5729216393 
+],
+[
+ 0.7272727273,
+0.7035412245,
+0.5858274594 
+],
+[
+ 0.7474747475,
+0.7215603254,
+0.5984436785 
+],
+[
+ 0.7676767677,
+0.7393161283,
+0.6107635327 
+],
+[
+ 0.7878787879,
+0.7567660979,
+0.6227808793 
+],
+[
+ 0.8080808081,
+0.773860346,
+0.6344902758 
+],
+[
+ 0.8282828283,
+0.7905408274,
+0.6458870533 
+],
+[
+ 0.8484848485,
+0.8067408548,
+0.6569673816 
+],
+[
+ 0.8686868687,
+0.8223852411,
+0.6677283241 
+],
+[
+ 0.8888888889,
+0.8373914918,
+0.6781678816 
+],
+[
+ 0.9090909091,
+0.8516725189,
+0.6882850221 
+],
+[
+ 0.9292929293,
+0.8651412633,
+0.6980796961 
+],
+[
+ 0.9494949495,
+0.8777172597,
+0.7075528381 
+],
+[
+ 0.9696969697,
+0.8893345392,
+0.7167063517 
+],
+[
+ 0.9898989899,
+0.8999494822,
+0.7255430813 
+],
+[
+ 1.01010101,
+0.9095467108,
+0.7340667701 
+],
+[
+ 1.03030303,
+0.9181413021,
+0.742282006 
+],
+[
+ 1.050505051,
+0.9257766176,
+0.7501941573 
+],
+[
+ 1.070707071,
+0.9325184399,
+0.7578093002 
+],
+[
+ 1.090909091,
+0.9384471298,
+0.76513414 
+],
+[
+ 1.111111111,
+0.9436497161,
+0.7721759291 
+],
+[
+ 1.131313131,
+0.9482133124,
+0.7789423824 
+],
+[
+ 1.151515152,
+0.9522204759,
+0.7854415934 
+],
+[
+ 1.171717172,
+0.9557464745,
+0.7916819519 
+],
+[
+ 1.191919192,
+0.9588580829,
+0.7976720658 
+],
+[
+ 1.212121212,
+0.9616134307,
+0.8034206866 
+],
+[
+ 1.232323232,
+0.9640624843,
+0.8089366413 
+],
+[
+ 1.252525253,
+0.966247848,
+0.8142287695 
+],
+[
+ 1.272727273,
+0.9682056805,
+0.8193058685 
+],
+[
+ 1.292929293,
+0.9699666048,
+0.8241766433 
+],
+[
+ 1.313131313,
+0.9715565479,
+0.8288496648 
+],
+[
+ 1.333333333,
+0.9729974832,
+0.8333333333 
+],
+[
+ 1.353535354,
+0.9743080703,
+0.8376358492 
+],
+[
+ 1.373737374,
+0.9755041958,
+0.841765188 
+],
+[
+ 1.393939394,
+0.9765994272,
+0.8457290819 
+],
+[
+ 1.414141414,
+0.9776053902,
+0.849535005 
+],
+[
+ 1.434343434,
+0.9785320818,
+0.8531901639 
+],
+[
+ 1.454545455,
+0.9793881294,
+0.8567014904 
+],
+[
+ 1.474747475,
+0.9801810057,
+0.8600756389 
+],
+[
+ 1.494949495,
+0.9809172064,
+0.8633189858 
+],
+[
+ 1.515151515,
+0.9816023986,
+0.8664376311 
+],
+[
+ 1.535353535,
+0.9822415432,
+0.8694374022 
+],
+[
+ 1.555555556,
+0.982838998,
+0.8723238596 
+],
+[
+ 1.575757576,
+0.9833986037,
+0.8751023026 
+],
+[
+ 1.595959596,
+0.9839237559,
+0.8777777778 
+],
+[
+ 1.616161616,
+0.9844174661,
+0.8803550864 
+],
+[
+ 1.636363636,
+0.9848824129,
+0.8828387939 
+],
+[
+ 1.656565657,
+0.9853209861,
+0.8852332383 
+],
+[
+ 1.676767677,
+0.9857353231,
+0.8875425402 
+],
+[
+ 1.696969697,
+0.9861273413,
+0.8897706119 
+],
+[
+ 1.717171717,
+0.9864987645,
+0.8919211667 
+],
+[
+ 1.737373737,
+0.9868511467,
+0.8939977283 
+],
+[
+ 1.757575758,
+0.987185892,
+0.8960036401 
+],
+[
+ 1.777777778,
+0.9875042721,
+0.8979420738 
+],
+[
+ 1.797979798,
+0.9878074408,
+0.8998160382 
+],
+[
+ 1.818181818,
+0.9880964479,
+0.9016283877 
+],
+[
+ 1.838383838,
+0.9883722497,
+0.90338183 
+],
+[
+ 1.858585859,
+0.9886357197,
+0.9050789343 
+],
+[
+ 1.878787879,
+0.9888876569,
+0.9067221382 
+],
+[
+ 1.898989899,
+0.9891287935,
+0.9083137551 
+],
+[
+ 1.919191919,
+0.9893598018,
+0.9098559809 
+],
+[
+ 1.939393939,
+0.9895812999,
+0.9113509002 
+],
+[
+ 1.95959596,
+0.9897938574,
+0.9128004924 
+],
+[
+ 1.97979798,
+0.9899979994,
+0.9142066379 
+],
+[
+ 2,
+0.9901942114,
+0.915571123 
+] 
+];
+data.addColumn('number','L/P Ratio');
+data.addColumn('number','Bound-1');
+data.addColumn('number','Bound-2');
+data.addRows(datajson);
+return(data);
+}
+ 
+// jsDrawChart
+function drawChartLineChartID1bd2222ffe15() {
+var data = gvisDataLineChartID1bd2222ffe15();
+var options = {};
+options["allowHtml"] = true;
+options["width"] =   1000;
+options["height"] =    500;
+options["legend"] = "right";
+options["hAxis"] = {title:'L/P Ratio'};
+options["vAxis"] = {title:'Fraction Bound'};
+options["colors"] = ['red','blue'];
+
+    var chart = new google.visualization.LineChart(
+    document.getElementById('LineChartID1bd2222ffe15')
+    );
+    chart.draw(data,options);
+    
+
+}
+  
+ 
+// jsDisplayChart
+(function() {
+var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+var chartid = "corechart";
+  
+// Manually see if chartid is in pkgs (not all browsers support Array.indexOf)
+var i, newPackage = true;
+for (i = 0; newPackage && i < pkgs.length; i++) {
+if (pkgs[i] === chartid)
+newPackage = false;
+}
+if (newPackage)
+  pkgs.push(chartid);
+  
+// Add the drawChart function to the global list of callbacks
+callbacks.push(drawChartLineChartID1bd2222ffe15);
+})();
+function displayChartLineChartID1bd2222ffe15() {
+  var pkgs = window.__gvisPackages = window.__gvisPackages || [];
+  var callbacks = window.__gvisCallbacks = window.__gvisCallbacks || [];
+  window.clearTimeout(window.__gvisLoad);
+  // The timeout is set to 100 because otherwise the container div we are
+  // targeting might not be part of the document yet
+  window.__gvisLoad = setTimeout(function() {
+  var pkgCount = pkgs.length;
+  google.load("visualization", "1", { packages:pkgs, callback: function() {
+  if (pkgCount != pkgs.length) {
+  // Race condition where another setTimeout call snuck in after us; if
+  // that call added a package, we must not shift its callback
+  return;
+}
+while (callbacks.length > 0)
+callbacks.shift()();
+} });
+}, 100);
+}
+ 
+// jsFooter
+</script>
+ 
+<!-- jsChart -->  
+<script type="text/javascript" src="https://www.google.com/jsapi?callback=displayChartLineChartID1bd2222ffe15"></script>
+ 
+<!-- divChart -->
+  
+<div id="LineChartID1bd2222ffe15" 
+  style="width: 1000; height: 500;">
+</div>
