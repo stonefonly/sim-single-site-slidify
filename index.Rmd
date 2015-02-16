@@ -18,8 +18,8 @@ In biological studies, it's often to see simple 1:1 binding systems, e.g. bindin
 <div style='float:left'> <img src=./binding.png> </div>
 
 <div style='font-size:80%'>
-  <br><br>
-  Such a system can be described by the following equations:  
+  <br>
+  Such a system can be described by the following equations (Please refresh the webpage or try another browser if the equations cannot display correctly):  
   $$ L_{total} = L + PL $$
   $$ P_{total} = P + PL $$
   $$ Kd = (P*L) / PL $$
